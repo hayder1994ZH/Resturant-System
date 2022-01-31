@@ -63,7 +63,7 @@ class CategoriesController extends Controller
         $this->LangBodysRepository->create($langData);
         
         //Response
-        return Utilities::wrap(['message' => 'created successfully'], 200);
+        return Utilities::wrap(['message' => 'created category successfully'], 200);
     }
 
     /**
@@ -75,6 +75,48 @@ class CategoriesController extends Controller
     public function show($id)
     {
         //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Categories  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function addCategoryLanguage(Request $request)
+    {
+        $langData = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'lang_id' => 'required|string|exists:languages,id',
+            'tbable_id' => 'required|string|exists:categories,id',
+        ]);
+        $langData['tbable_type '] = 'Categories';
+        $this->LangBodysRepository->create($langData);
+        
+        //Response
+        return Utilities::wrap(['message' => 'created category language successfully'], 200);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Categories  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateCategoryLanguage(Request $request, $id)
+    {
+        $langData = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'lang_id' => 'required|string|exists:languages,id',
+            'tbable_id' => 'required|string|exists:categories,id'
+        ]);
+        $langData['tbable_type '] = 'Categories';
+        $this->LangBodysRepository->update($id, $langData);
+        
+        //Response
+        return Utilities::wrap(['message' => 'update category language successfully'], 200);
     }
 
     /**

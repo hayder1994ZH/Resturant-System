@@ -53,12 +53,21 @@ class MealsController extends Controller
             'category_id' => 'required|integer|exists:categories,id',
             'restaurant_id' => 'required|integer|exists:restaurants,id'
         ]);
+        $langData = $request->validate([
+            'title' => 'required|string',
+            'description' => 'string',
+            'lang_id' => 'required|integer|exists:languages,id'
+        ]);
 
         if ($request->hasfile('poster')) { //check image
             $data['poster'] = Utilities::uploadImage($request->file('poster'));            
         }
-        $response =  $this->MealsRepository->create($data);
-        return Utilities::wrap($response, 200);
+        $meals =  $this->MealsRepository->create($data);//create new meal
+        
+        $langData['tbable_type '] = 'Meals';
+        $langData['tbable_id  '] = $meals->id;
+        $this->LangBodysRepository->create($langData);//add meal data
+        return Utilities::wrap(['message' => 'create meal successfully'], 200);
     }
 
     /**
@@ -70,6 +79,43 @@ class MealsController extends Controller
     public function show($id)
     {
         return $this->MealsRepository->getById($id);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Meals  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function addNewMealLanguage(Request $request)
+    {
+        $langData = $request->validate([
+            'title' => 'required|string',
+            'description' => 'string',
+            'lang_id' => 'required|integer|exists:languages,id',
+            'tbable_id' => 'required|integer|exists:meals,id'
+        ]);
+
+        $langData['tbable_type '] = 'Meals';
+        $this->LangBodysRepository->create($langData);//add meal language
+        return Utilities::wrap(['message' => 'create new meal language successfully'], 200);
+    }
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Meals  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateMealLanguage(Request $request,$id)
+    {
+        $langData = $request->validate([
+            'title' => 'string',
+            'description' => 'string',
+            'lang_id' => 'integer|exists:languages,id',
+            'tbable_id' => 'integer|exists:meals,id'
+        ]);
+        $this->LangBodysRepository->update($id, $langData);//update meal language
+        return Utilities::wrap(['message' => 'update meal language successfully'], 200);
     }
 
     /**
