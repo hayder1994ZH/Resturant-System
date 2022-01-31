@@ -18,11 +18,6 @@ class User extends Authenticatable implements JWTSubject
         'password',
     ];
 
-    // protected $appends = ['imageUser', 'channels'];
-    // public function getImageUserAttribute(){
-    //     return ($this->image != null)? Utilities::hostImages() . Utilities::$imageBuket . $this->image:null;
-    // }
-
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -42,7 +37,11 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function rules(){//get  user rule
+    //Relations
+    public function rules(){
         return $this->belongsTo(Rules::class, 'rule_id');
+    }
+    public function restaurant(){
+        return $this->belongsTo(Restaurants::class, 'restaurant_id');
     }
 }
