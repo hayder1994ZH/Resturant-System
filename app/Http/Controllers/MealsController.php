@@ -90,12 +90,24 @@ class MealsController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Categories  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response 
      */
     public function getLangMeal($id)
     {
         $relations = ['lang'];
         return $this->MealsRepository->getMealLang($id);
+    }
+    
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Categories  $id
+     * @return \Illuminate\Http\Response getExtraMeal
+     */
+    public function getExtraMeals($id)
+    {
+        $relations = [];
+        return $this->MealsRepository->getExtraMeal($id);
     }
 
     /**

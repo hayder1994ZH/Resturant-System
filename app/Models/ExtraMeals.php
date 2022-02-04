@@ -10,7 +10,7 @@ class ExtraMeals extends Model
     protected $guarded =[];
     
     protected $hidden =[
-        'is_deleted', 'created_at', 'updated_at'
+        'is_deleted'
     ];
     
     protected function serializeDate(DateTimeInterface $date)

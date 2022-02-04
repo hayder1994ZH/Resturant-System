@@ -50,6 +50,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('meal/lang/{id}', 'MealsController@getLangMeal');
         Route::post('meal/lang', 'MealsController@addNewMealLanguage');
         Route::put('meal/lang/{id}', 'MealsController@updateMealLanguage');
+        Route::get('meal/extra/{id}', 'MealsController@getExtraMeals');
+
         //Restaurants
         Route::apiResource('restaurant', 'RestaurantsController');
 
