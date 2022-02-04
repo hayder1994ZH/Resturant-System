@@ -76,7 +76,7 @@ class UserController extends Controller
             'phone' => 'string',
             'rule_id' => 'integer|exists:rules,id',
             'password' => 'string|min:6',
-            'image' => 'file'
+            'image' => 'nullable|file'
         ]);
 
         //Processing

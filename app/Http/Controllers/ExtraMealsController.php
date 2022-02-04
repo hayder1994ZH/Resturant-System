@@ -47,7 +47,7 @@ class ExtraMealsController extends Controller
     {
         $data = $request->validate([
             'image' => 'required|image|mimes:jpg,png,jpeg',
-            'meal_id ' => 'required|integer|exists:meals,id'
+            'meal_id' => 'required|integer|exists:meals,id'
         ]);
 
         if ($request->hasfile('image')) { //check image
@@ -65,7 +65,8 @@ class ExtraMealsController extends Controller
      */
     public function show($id)
     {
-        //
+        $relations = [];
+        return $this->ExtraMealsRepository->getByIdModel($id, $relations);
     }
 
     /**

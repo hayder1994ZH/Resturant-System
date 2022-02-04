@@ -14,8 +14,8 @@ class LangBodysController extends Controller
     public function __construct()
     {
         $this->LangBodysRepository = new LangBodysRepository(new LangBodys());
-        $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store']]);
-        $this->middleware('role:owner', ['only' => ['destroy']]);
+        $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store','destroy']]);
+        // $this->middleware('role:owner', ['only' => ['destroy']]);
         $this->auth = Utilities::auth();
     }
     /**
@@ -56,7 +56,8 @@ class LangBodysController extends Controller
      */
     public function show($id)
     {
-        //
+        $relations = [];
+        return $this->ExtraMealsRepository->getByIdModel($id, $relations);
     }
 
     /**
@@ -79,6 +80,8 @@ class LangBodysController extends Controller
      */
     public function destroy($id)
     {
-       //
+        $model = LangBodys::where('id', $id)->firstOrFail();
+        $this->LangBodysRepository->delete($model);
+        return Utilities::wrap(['message' => 'deleted successfully'], 200);
     }
 }

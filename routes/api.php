@@ -29,6 +29,9 @@ Route::group(['prefix' => 'v1'], function () {
         
         //Categories
         Route::apiResource('category', 'CategoriesController');
+        Route::get('category/lang/{id}', 'CategoriesController@getLangCategory');
+        Route::post('category/lang', 'CategoriesController@addCategoryLanguage');
+        Route::put('category/lang/{id}', 'CategoriesController@updateCategoryLanguage');
         
         //Rules
         Route::apiResource('rule', 'RulesController');
@@ -42,11 +45,11 @@ Route::group(['prefix' => 'v1'], function () {
         //Languages
         Route::apiResource('language', 'LanguagesController');
 
-        //Meals
-        Route::apiResource('meal', 'MealsController');//
+        //Meals getLangMeal
+        Route::apiResource('meal', 'MealsController');
+        Route::get('meal/lang/{id}', 'MealsController@getLangMeal');
         Route::post('meal/lang', 'MealsController@addNewMealLanguage');
         Route::put('meal/lang/{id}', 'MealsController@updateMealLanguage');
-
         //Restaurants
         Route::apiResource('restaurant', 'RestaurantsController');
 

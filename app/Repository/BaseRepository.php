@@ -28,33 +28,7 @@ abstract class BaseRepository {
             'items' => $resultData->get()
         ];
     } 
-
-    //Base repo to get all items
-    public function getListVideo($skip, $take, $relations, $filter, $subcategory, $age_range, $gender_id){
-        $result = QueryBuilder::for($this->table)
-                                ->allowedFilters($filter);
-                                if(!empty($relations)){
-                                    $result = $result->with($relations);
-                                }
-                                $result = $result ->whereIn('subcategory_id', $subcategory)
-                                                ->whereHas('videoObjects')
-                                                ->whereHas('age_range', function($q) use ($age_range){
-                                                    $q->where('age_from', '<=',$age_range);
-                                                })
-                                                  ->where('gender_id', $gender_id);
-
-                                    
-        $totalCount = $result->get()->count();
-        $resultData = $result->where('is_deleted', 0)
-                        ->take($take)
-                        ->skip($skip)
-                        ->orderBy('created_at', 'desc');
-        return [
-            'totalCount' => $totalCount,
-            'items' => $resultData->get()
-        ];
-    } 
-
+    
     //Base repo to get item by id
     public function getById($id){
         return $this->table->where('is_deleted', 0)->findOrFail($id);

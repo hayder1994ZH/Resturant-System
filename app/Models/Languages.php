@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
 class Languages extends Model
@@ -12,6 +13,10 @@ class Languages extends Model
         'is_deleted', 'created_at', 'updated_at'
     ];
     
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d h:i:s');
+    }
     public function users()
     {
         return $this->hasMany(User::class);

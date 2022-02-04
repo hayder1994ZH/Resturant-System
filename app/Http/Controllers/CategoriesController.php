@@ -18,8 +18,8 @@ class CategoriesController extends Controller
     {
         $this->LangBodysRepository = new LangBodysRepository(new LangBodys());
         $this->CategoriesRepository = new CategoriesRepository(new Categories());
-        $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store']]);
-        $this->middleware('role:owner', ['only' => ['destroy']]);
+        $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store', 'destroy']]);
+        // $this->middleware('role:owner', ['only' => ['destroy']]);
         $this->auth = Utilities::auth();
     }
     /**
@@ -34,8 +34,8 @@ class CategoriesController extends Controller
             'skip' => 'Integer',
             'take' => 'required|Integer'
         ]);
-        $relations = [];
-        $filter = [];
+        $relations = ['restaurant', 'langBody'];
+        $filter = ['restaurant.name','langBody.title', 'restaurant.uuid'];
         $take = $request->take;
         $skip = $request->skip;
         return $this->CategoriesRepository->getList($skip, $take, $relations, $filter);
@@ -50,16 +50,20 @@ class CategoriesController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'restaurant_id' => 'required|string',
+            'restaurant_id' => 'required|integer|exists:restaurants,id',
+            'image' => 'required|file|mimes:jpg,jpeg,png',
         ]);
         $langData = $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
-            'lang_id' => 'required|string|exists:languages,id',
+            'lang_id' => 'required|integer|exists:languages,id',
         ]);
+        if ($request->hasfile('image')) {//check image
+            $data['image'] = Utilities::uploadImage($request->file('image'));            
+        }
         $category =  $this->CategoriesRepository->create($data);
-        $langData['tbable_type '] = 'Categories';
-        $langData['tbable_id  '] = $category->id;
+        $langData['tbable_type'] = 'Categories';
+        $langData['tbable_id'] = $category->id;
         $this->LangBodysRepository->create($langData);
         
         //Response
@@ -74,7 +78,19 @@ class CategoriesController extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->CategoriesRepository->getById($id);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Categories  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getLangCategory($id)
+    {
+        $relations = ['lang'];
+        return $this->CategoriesRepository->getCategoryLang($id, $relations);
     }
 
     /**
@@ -91,7 +107,11 @@ class CategoriesController extends Controller
             'lang_id' => 'required|string|exists:languages,id',
             'tbable_id' => 'required|string|exists:categories,id',
         ]);
-        $langData['tbable_type '] = 'Categories';
+        $langData['tbable_type'] = 'Categories';
+        $checkLang = LangBodys::where('tbable_id', $langData['tbable_id'])->where('tbable_type', 'Categories')->where('lang_id', $langData['lang_id'])->first();
+        if($checkLang)
+            return Utilities::wrap(['error' => 'this lang already exists'], 400);
+
         $this->LangBodysRepository->create($langData);
         
         //Response
@@ -109,10 +129,14 @@ class CategoriesController extends Controller
         $langData = $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
-            'lang_id' => 'required|string|exists:languages,id',
-            'tbable_id' => 'required|string|exists:categories,id'
+            'lang_id' => 'required|integer|exists:languages,id',
+            'tbable_id' => 'required|integer|exists:categories,id'
         ]);
-        $langData['tbable_type '] = 'Categories';
+        $checkLang = LangBodys::where('tbable_id', $langData['tbable_id'])->where('tbable_type', 'Categories')->where('lang_id', $langData['lang_id'])->first();
+        if($checkLang)
+            if($checkLang->id != $id)
+                return Utilities::wrap(['error' => 'this lang already exists'], 400);
+            
         $this->LangBodysRepository->update($id, $langData);
         
         //Response
@@ -128,7 +152,15 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->validate([
+            'restaurant_id' => 'required|integer|exists:restaurants,id',
+        ]);
+        if ($request->hasfile('image')) {//check image
+            $data['image'] = Utilities::uploadImage($request->file('image'));            
+        }
+        $this->CategoriesRepository->update($id, $data);
+        //Response
+        return Utilities::wrap(['message' => 'updated category successfully'], 200);
     }
 
     /**

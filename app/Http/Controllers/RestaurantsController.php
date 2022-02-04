@@ -31,7 +31,7 @@ class RestaurantsController extends Controller
             'take' => 'required|Integer'
         ]);
         $relations = [];
-        $filter = [];
+        $filter = ['name', 'details'];
         $take = $request->take;
         $skip = $request->skip;
         return $this->RestaurantsRepository->getList($skip, $take, $relations, $filter);

@@ -3,19 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Meals;
+use App\Models\LangBodys;
 use App\Helpers\Utilities;
 use Illuminate\Http\Request;
 use App\Repository\MealsRepository;
+use App\Repository\LangBodysRepository;
 
 class MealsController extends Controller
 {
     private $MealsRepository;
+    private $LangBodysRepository;
     private $auth;
     public function __construct()
     {
+        $this->LangBodysRepository = new LangBodysRepository(new LangBodys());
         $this->MealsRepository = new MealsRepository(new Meals());
-        $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store']]);
-        $this->middleware('role:owner', ['only' => ['destroy']]);
+        $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store', 'destroy']]);
+        // $this->middleware('role:owner', ['only' => ['destroy']]);
         $this->auth = Utilities::auth();
     }
     /**
@@ -30,8 +34,8 @@ class MealsController extends Controller
             'skip' => 'Integer',
             'take' => 'required|Integer'
         ]);
-        $relations = [];
-        $filter = [];
+        $relations = ['restaurant', 'category', 'langBody'];
+        $filter = ['restaurant.name', 'langBody.title'];
         $take = $request->take;
         $skip = $request->skip;
         return $this->MealsRepository->getList($skip, $take, $relations, $filter);
@@ -47,8 +51,8 @@ class MealsController extends Controller
     {
         $data = $request->validate([
             'poster' => 'required|image|mimes:jpg,png,jpeg',
-            'price' => 'required|float',
-            'discount' => 'float',
+            'price' => 'required|numeric',
+            'discount' => 'numeric',
             'currency' => 'required|string',
             'category_id' => 'required|integer|exists:categories,id',
             'restaurant_id' => 'required|integer|exists:restaurants,id'
@@ -64,8 +68,8 @@ class MealsController extends Controller
         }
         $meals =  $this->MealsRepository->create($data);//create new meal
         
-        $langData['tbable_type '] = 'Meals';
-        $langData['tbable_id  '] = $meals->id;
+        $langData['tbable_type'] = 'Meals';
+        $langData['tbable_id'] = $meals->id;
         $this->LangBodysRepository->create($langData);//add meal data
         return Utilities::wrap(['message' => 'create meal successfully'], 200);
     }
@@ -78,7 +82,20 @@ class MealsController extends Controller
      */
     public function show($id)
     {
-        return $this->MealsRepository->getById($id);
+        $relations = ['category', 'langBody'];
+        return $this->MealsRepository->getByIdModel($id, $relations);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Categories  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getLangMeal($id)
+    {
+        $relations = ['lang'];
+        return $this->MealsRepository->getMealLang($id);
     }
 
     /**
@@ -129,8 +146,8 @@ class MealsController extends Controller
     {
         $data = $request->validate([
             'poster' => 'image|mimes:jpg,png,jpeg',
-            'price' => 'float',
-            'discount' => 'float',
+            'price' => 'numeric',
+            'discount' => 'numeric',
             'currency' => 'string',
             'category_id' => 'integer|exists:categories,id',
             'restaurant_id' => 'integer|exists:restaurants,id'

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use App\Helpers\Utilities;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -18,6 +19,10 @@ class User extends Authenticatable implements JWTSubject
         'password',
     ];
 
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d h:i:s');
+    }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
