@@ -32,7 +32,7 @@ class UserRepository extends BaseRepository
             return ['error' => 'The password is invalid', 'code' => 401];
         }
 
-        $active = User::where('username', $request['username'])->where('is_deleted', 0)->first();
+        $active = User::where('username', $request['username'])->with('rules', 'restaurant')->where('is_deleted', 0)->first();
 
         if (!$active) { //check user active
             return ['error' => 'This user not active', 'code' => 400];
@@ -48,8 +48,10 @@ class UserRepository extends BaseRepository
         }
          $baseToken =  auth()->claims([
             'user_id' => $user->rule_id,
+            'user_name' => $user->rules->name,
             'name' => $user->name,
             'username' => $user->username,
+            'uid' => (!is_null($user->restaurant))? $user->restaurant->uid:null ,
          ])->fromUser($user);
         return ['token' => $baseToken, 'code' => 200];
     }

@@ -30,8 +30,8 @@ class UserController extends Controller
             'skip' => 'Integer',
             'take' => 'required|Integer'
         ]);
-        $relations = ['rules'];
-        $filter = ['full_name', 'username', 'phone'];
+        $relations = ['rules', 'restaurant'];
+        $filter = ['full_name', 'username', 'phone', 'restaurant.name'];
         $take = $request->take;
         $skip = $request->skip;
         return $this->UserRepository->getList($skip, $take, $relations, $filter);
@@ -51,8 +51,8 @@ class UserController extends Controller
             'username' => 'required|string|unique:users,username',
             'phone' => 'required|unique:users,phone',
             'password' => 'required|string|min:6',
-            'rule_id' => 'integer|exists:rules,id',
-            'image' => 'nullable|file'
+            'rule_id' => 'required|integer|exists:rules,id',
+            'restaurant_id' => 'required|integer|exists:restaurants,id',
         ]);
         
         //Processing
@@ -76,7 +76,7 @@ class UserController extends Controller
             'phone' => 'string',
             'rule_id' => 'integer|exists:rules,id',
             'password' => 'string|min:6',
-            'image' => 'nullable|file'
+            'restaurant_id' => 'integer|exists:restaurants,id',
         ]);
 
         //Processing
@@ -137,7 +137,7 @@ class UserController extends Controller
 
     public function me() // Anyone
     {
-        return auth()->user()->load('rules');
+        return auth()->user()->load('rules','restaurant');
     }
 
     public function updateProfile(Request $request) // Anyone

@@ -125,7 +125,10 @@ class MealsController extends Controller
             'tbable_id' => 'required|integer|exists:meals,id'
         ]);
 
-        $langData['tbable_type '] = 'Meals';
+        $langData['tbable_type'] = 'Meals';
+        $checkLang = LangBodys::where('tbable_id', $langData['tbable_id'])->where('tbable_type', 'Meals')->where('lang_id', $langData['lang_id'])->first();
+        if($checkLang)
+            return Utilities::wrap(['error' => 'this lang already exists'], 400);
         $this->LangBodysRepository->create($langData);//add meal language
         return Utilities::wrap(['message' => 'create new meal language successfully'], 200);
     }
@@ -143,6 +146,10 @@ class MealsController extends Controller
             'lang_id' => 'integer|exists:languages,id',
             'tbable_id' => 'integer|exists:meals,id'
         ]);
+        $checkLang = LangBodys::where('tbable_id', $langData['tbable_id'])->where('tbable_type', 'Meals')->where('lang_id', $langData['lang_id'])->first();
+        if($checkLang)
+            if($checkLang->id != $id)
+                return Utilities::wrap(['error' => 'this lang already exists'], 400);
         $this->LangBodysRepository->update($id, $langData);//update meal language
         return Utilities::wrap(['message' => 'update meal language successfully'], 200);
     }
