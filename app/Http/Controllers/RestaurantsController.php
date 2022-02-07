@@ -70,6 +70,17 @@ class RestaurantsController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Restaurants  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getByUid($uid)
+    {
+        return Restaurants::where('uid', $uid)->where('is_deleted', 0)->firstOrFail();
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

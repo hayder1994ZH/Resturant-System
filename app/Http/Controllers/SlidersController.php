@@ -15,7 +15,6 @@ class SlidersController extends Controller
     {
         $this->SlidersRepository = new SlidersRepository(new Sliders());
         $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store']]);
-        $this->middleware('role:owner', ['only' => ['destroy']]);
         $this->auth = Utilities::auth();
     }
     /**
@@ -30,11 +29,13 @@ class SlidersController extends Controller
             'skip' => 'Integer',
             'take' => 'required|Integer'
         ]);
-        $relations = [];
+        $relations = ['meal.langBody','meal.category', 'restaurant'];
         $filter = [];
         $take = $request->take;
         $skip = $request->skip;
-        return $this->SlidersRepository->getList($skip, $take, $relations, $filter);
+        if($this->auth->rules->name == 'owner')
+            return $this->SlidersRepository->getList($skip, $take, $relations, $filter);
+        return $this->SlidersRepository->getListAdmin($skip, $take, $relations, $filter, $this->auth->restaurant_id);
     }
 
     /**
@@ -46,7 +47,8 @@ class SlidersController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'meal_id ' => 'required|integer|exists:meals,id'
+            'meal_id' => 'required|integer|exists:meals,id',
+            'restaurant_id' => 'required|integer|exists:restaurants,id'
         ]);
 
         $response =  $this->SlidersRepository->create($data);
@@ -74,7 +76,8 @@ class SlidersController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'meal_id ' => 'required|integer|exists:meals,id'
+            'meal_id' => 'required|integer|exists:meals,id',
+            'restaurant_id' => 'required|integer|exists:restaurants,id'
         ]);
 
         $response =  $this->SlidersRepository->update($id, $data);
@@ -90,6 +93,9 @@ class SlidersController extends Controller
     public function destroy($id)
     {
         $model = Sliders::where('id', $id)->firstOrFail();
+        if($model->restaurant_id != $this->auth->restaurant_id){
+            return Utilities::wrap(['message' => 'permission denied'], 401);
+        }
         $this->SlidersRepository->delete($model);
         return Utilities::wrap(['message' => 'deleted successfully'], 200);
     }

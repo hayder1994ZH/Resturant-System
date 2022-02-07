@@ -38,7 +38,10 @@ class MealsController extends Controller
         $filter = ['restaurant.name', 'langBody.title'];
         $take = $request->take;
         $skip = $request->skip;
-        return $this->MealsRepository->getList($skip, $take, $relations, $filter);
+        
+        if($this->auth->rules->name == 'owner')
+            return $this->MealsRepository->getList($skip, $take, $relations, $filter);
+        return $this->MealsRepository->getListAdmin($skip, $take, $relations, $filter, $this->auth->restaurant_id);
     }
 
     /**

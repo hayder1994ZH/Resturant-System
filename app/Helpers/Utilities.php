@@ -17,7 +17,7 @@ class Utilities {
     public static function auth()//check auth
     {
         if(Auth::check()){
-           return auth()->user();
+           return auth()->user()->load('rules');
         }
         return null;
     }

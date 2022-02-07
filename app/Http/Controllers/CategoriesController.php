@@ -35,10 +35,13 @@ class CategoriesController extends Controller
             'take' => 'required|Integer'
         ]);
         $relations = ['restaurant', 'langBody'];
-        $filter = ['restaurant.name','langBody.title', 'restaurant.uuid'];
+        $filter = ['restaurant.name','langBody.title', 'restaurant.uid'];
         $take = $request->take;
         $skip = $request->skip;
-        return $this->CategoriesRepository->getList($skip, $take, $relations, $filter);
+        if($this->auth->rules->name == 'owner'){
+            return $this->CategoriesRepository->getList($skip, $take, $relations, $filter);
+        }
+        return $this->CategoriesRepository->getListAdmin($skip, $take, $relations, $filter, $this->auth->restaurant_id);
     }
 
     /**

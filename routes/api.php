@@ -54,6 +54,7 @@ Route::group(['prefix' => 'v1'], function () {
 
         //Restaurants
         Route::apiResource('restaurant', 'RestaurantsController');
+        Route::get('my/restaurant/{uid}', 'RestaurantsController@getByUid');
 
         //Sliders
         Route::apiResource('slider', 'SlidersController');

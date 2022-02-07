@@ -21,4 +21,8 @@ class Sliders extends Model
     {
         return $this->belongsTo(Meals::class);
     }
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurants::class);
+    }
 }
