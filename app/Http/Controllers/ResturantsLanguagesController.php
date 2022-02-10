@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Utilities;
-use App\Models\ExtraMeals;
 use Illuminate\Http\Request;
-use App\Repository\ExtraMealsRepository;
+use App\Models\ResturantsLanguages;
+use App\Repository\ResturantsLanguagesRepository;
 
-class ExtraMealsController extends Controller
+class ResturantsLanguagesController extends Controller
 {
-    private $ExtraMealsRepository;
+    private $ResturantsLanguagesRepository;
     private $auth;
     public function __construct()
     {
-        $this->ExtraMealsRepository = new ExtraMealsRepository(new ExtraMeals());
+        $this->ResturantsLanguagesRepository = new ResturantsLanguagesRepository(new ResturantsLanguages());
         $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store']]);
         $this->middleware('role:owner', ['only' => ['destroy']]);
         $this->auth = Utilities::auth();
@@ -34,7 +34,7 @@ class ExtraMealsController extends Controller
         $filter = [];
         $take = $request->take;
         $skip = $request->skip;
-        return $this->ExtraMealsRepository->getList($skip, $take, $relations, $filter);
+        return $this->ResturantsLanguagesRepository->getList($skip, $take, $relations, $filter);
     }
 
     /**
@@ -46,60 +46,57 @@ class ExtraMealsController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'image' => 'required|image|mimes:jpg,png,jpeg',
-            'meal_id' => 'required|integer|exists:meals,id'
+            'meal_id' => 'required|integer|exists:meals,id',
+            'restaurant_id' => 'required|integer|exists:restaurants,id'
         ]);
 
         if ($request->hasfile('image')) { //check image
             $data['image'] = Utilities::uploadImage($request->file('image'));            
         }
-        $response =  $this->ExtraMealsRepository->create($data);
+        $response =  $this->ResturantsLanguagesRepository->create($data);
         return Utilities::wrap($response, 200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ExtraMeals  $id
+     * @param  \App\Models\ResturantsLanguages  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
         $relations = [];
-        return $this->ExtraMealsRepository->getByIdModel($id, $relations);
+        return $this->ResturantsLanguagesRepository->getByIdModel($id, $relations);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ExtraMeals  $id
+     * @param  \App\Models\ResturantsLanguages  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'image' => 'image|mimes:jpg,png,jpeg',
-            'meal_id' => 'integer|exists:meals,id'
+            'meal_id' => 'integer|exists:meals,id',
+            'restaurant_id' => 'integer|exists:restaurants,id',
         ]);
 
-        if ($request->hasfile('image')) { //check image
-            $data['image'] = Utilities::uploadImage($request->file('image'));            
-        }
-        $response =  $this->ExtraMealsRepository->update($id, $data);
+        $response =  $this->ResturantsLanguagesRepository->update($id, $data);
         return Utilities::wrap($response, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ExtraMeals  $id
+     * @param  \App\Models\ResturantsLanguages  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $model = ExtraMeals::where('id', $id)->firstOrFail();
-        $this->ExtraMealsRepository->delete($model);
+        $model = ResturantsLanguages::where('id', $id)->firstOrFail();
+        $this->ResturantsLanguagesRepository->delete($model);
         return Utilities::wrap(['message' => 'deleted successfully'], 200);
     }
 }
