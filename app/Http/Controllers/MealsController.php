@@ -194,4 +194,62 @@ class MealsController extends Controller
         $this->MealsRepository->delete($model);
         return Utilities::wrap(['message' => 'deleted successfully'], 200);
     }
+
+    // ======= web api
+    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getListWeb(Request $request, $uuid) // Admin
+    {
+        //validations
+        $request->validate([
+            'skip' => 'Integer',
+            'take' => 'required|Integer'
+        ]);
+        $filter = ['restaurant.name','lang.title', 'restaurant.uid', 'category_id', 'resturant'];
+        $take = $request->take;
+        $skip = $request->skip;
+        if(is_null(Utilities::getRestaurant($uuid))){
+            return Utilities::wrap(['message' => 'You Don`t have License'], 400);
+        }
+        return $this->MealsRepository->getWeb($skip, $take, $filter,Utilities::getRestaurant($uuid)->id);
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getListWebFavorite(Request $request, $uuid) // Admin
+    {
+        //validations
+        $request->validate([
+            'skip' => 'Integer',
+            'take' => 'required|Integer'
+        ]);
+        $filter = ['restaurant.name','lang.title', 'restaurant.uid', 'category_id', 'resturant'];
+        $take = $request->take;
+        $skip = $request->skip;
+        if(is_null(Utilities::getRestaurant($uuid))){
+            return Utilities::wrap(['message' => 'You Don`t have License'], 400);
+        }
+        return $this->MealsRepository->getWebFavorite($skip, $take, $filter,Utilities::getRestaurant($uuid)->id);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Categories  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getMeal($id, $uuid)
+    {
+        if(is_null(Utilities::getRestaurant($uuid))){
+            return Utilities::wrap(['message' => 'You Don`t have License'], 400);
+        }
+        $relations = ['lang', 'extraMeal'];
+        return $this->MealsRepository->getByIdModelWeb($id, $relations, Utilities::getRestaurant($uuid)->id);
+    }
 }

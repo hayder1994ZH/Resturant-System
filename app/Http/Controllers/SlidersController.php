@@ -99,4 +99,27 @@ class SlidersController extends Controller
         $this->SlidersRepository->delete($model);
         return Utilities::wrap(['message' => 'deleted successfully'], 200);
     }
+
+    // ======= web api
+    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getListWeb(Request $request, $uuid) // Admin
+    {
+        //validations
+        $request->validate([
+            'skip' => 'Integer',
+            'take' => 'required|Integer'
+        ]);
+        $filter = ['meal_id'];
+        $take = $request->take;
+        $skip = $request->skip;
+        if(is_null(Utilities::getRestaurant($uuid))){
+            return Utilities::wrap(['message' => 'You Don`t have License'], 400);
+        }
+        return $this->SlidersRepository->getWeb($skip, $take, $filter,Utilities::getRestaurant($uuid)->id);
+    }
 }

@@ -61,3 +61,17 @@ Route::group(['prefix' => 'v1'], function () {
 
     });
 });
+Route::group(['prefix' => 'web'], function () {
+    
+    //Category
+    Route::get('category/{uuid}', 'CategoriesController@getListWeb');
+    Route::get('category/{id}/{uuid}', 'CategoriesController@getCategory');
+
+    //Meals
+    Route::get('meal/{uuid}', 'MealsController@getListWeb');
+    Route::get('meal/favorite/{uuid}', 'MealsController@getListWebFavorite');
+    Route::get('meal/{id}/{uuid}', 'MealsController@getMeal');
+    Route::get('slider/{uuid}', 'SlidersController@getListWeb');
+
+
+});

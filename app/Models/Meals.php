@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DateTimeInterface;
+use App\Helpers\Utilities;
 use Illuminate\Database\Eloquent\Model;
 
 class Meals extends Model
@@ -28,18 +29,15 @@ class Meals extends Model
     }
     public function langBody()
     {
-        $lang = request()->header('lang');
-        $lang = Languages::where('name', $lang)->first();
-        $lang = (!is_null($lang))? $lang->id:null;
-        $body = LangBodys::where('lang_id', $lang)->where('tbable_id', $this->id)->where('tbable_type', 'Meals')->first();
-        if(!is_null($body)){
-            return $this->hasOne(LangBodys::class, 'tbable_id')->where('tbable_type', 'Meals')->where('lang_id', $lang);
-        }
         return $this->hasOne(LangBodys::class, 'tbable_id')->where('tbable_type', 'Meals');
 
     }
     public function extraMeal()
     {
-        return $this->hasMany(ExtraMeals::class, 'meal_id')->where('tbable_type', 'Meals');
+        return $this->hasMany(ExtraMeals::class, 'meal_id');
+    }
+    public function lang()
+    {
+        return $this->hasOne(LangBodys::class, 'tbable_id')->where('tbable_type', 'Meals')->where('lang_id', Utilities::getLang());
     }
 }

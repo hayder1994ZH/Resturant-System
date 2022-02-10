@@ -1,8 +1,9 @@
 <?php
 namespace App\Repository;
 
-use App\Models\ExtraMeals;
 use App\Models\LangBodys;
+use App\Helpers\Utilities;
+use App\Models\ExtraMeals;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class MealsRepository extends BaseRepository {
@@ -42,5 +43,61 @@ class MealsRepository extends BaseRepository {
             'totalCount' => $totalCount,
             'items' => $resultData->get()
         ];
+    }
+
+    //======= web repo 
+    
+    //Base repo to get all items
+    public function getWeb($skip, $take, $filter, $id){
+        $result = QueryBuilder::for($this->table)
+                                ->where('is_deleted', 0)
+                                ->where('restaurant_id', $id)
+                                ->whereHas('lang', function($q){
+                                    $q->where('lang_id', Utilities::getLang());
+                                })
+                                ->with('lang')
+                                ->allowedFilters($filter);
+        $totalCount = $result->get()->count();
+        $resultData = $result->where('is_deleted', 0)
+                        ->take($take)
+                        ->skip($skip)
+                        ->orderBy('created_at', 'desc');
+        return [
+            'totalCount' => $totalCount,
+            'items' => $resultData->get()
+        ];
+    }
+    
+    //Base repo to get all items
+    public function getWebFavorite($skip, $take, $filter, $id){
+        $result = QueryBuilder::for($this->table)
+                                ->where('is_deleted', 0)
+                                ->where('type', 1)
+                                ->where('restaurant_id', $id)
+                                ->whereHas('lang', function($q){
+                                    $q->where('lang_id', Utilities::getLang());
+                                })
+                                ->with('lang')
+                                ->allowedFilters($filter);
+        $totalCount = $result->get()->count();
+        $resultData = $result->where('is_deleted', 0)
+                        ->take($take)
+                        ->skip($skip)
+                        ->orderBy('created_at', 'desc');
+        return [
+            'totalCount' => $totalCount,
+            'items' => $resultData->get()
+        ];
+    }
+
+    //Base repo to get item with models by id
+    public function getByIdModelWeb($id, $relations,$resturantId){
+        return $this->table->where('is_deleted', 0)
+        ->where('restaurant_id', $resturantId)
+        ->whereHas('lang', function($q){
+            $q->where('lang_id', Utilities::getLang());
+        })
+        ->with($relations)
+        ->findOrFail($id);
     }
 }
