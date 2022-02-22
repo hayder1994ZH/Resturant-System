@@ -30,7 +30,7 @@ class ResturantsLanguagesController extends Controller
             'skip' => 'Integer',
             'take' => 'required|Integer'
         ]);
-        $relations = [];
+        $relations = ['lang'];
         $filter = [];
         $take = $request->take;
         $skip = $request->skip;
@@ -46,7 +46,7 @@ class ResturantsLanguagesController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'meal_id' => 'required|integer|exists:meals,id',
+            'lang_id' => 'required|integer|exists:languages,id',
             'restaurant_id' => 'required|integer|exists:restaurants,id'
         ]);
 
@@ -70,6 +70,18 @@ class ResturantsLanguagesController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\ResturantsLanguages  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getByRestaurantId($restaurant_id)
+    {
+        $relations = ['lang'];
+        return $this->ResturantsLanguagesRepository->getByRestaurantId($restaurant_id, $relations);
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -79,7 +91,7 @@ class ResturantsLanguagesController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'meal_id' => 'integer|exists:meals,id',
+            'lang_id' => 'integer|exists:languages,id',
             'restaurant_id' => 'integer|exists:restaurants,id',
         ]);
 

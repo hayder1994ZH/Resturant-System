@@ -156,7 +156,7 @@ class CategoriesController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'restaurant_id' => 'required|integer|exists:restaurants,id',
+            'restaurant_id' => 'integer|exists:restaurants,id',
         ]);
         if ($request->hasfile('image')) {//check image
             $data['image'] = Utilities::uploadImage($request->file('image'));            

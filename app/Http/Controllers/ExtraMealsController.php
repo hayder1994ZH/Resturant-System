@@ -14,8 +14,7 @@ class ExtraMealsController extends Controller
     public function __construct()
     {
         $this->ExtraMealsRepository = new ExtraMealsRepository(new ExtraMeals());
-        $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store']]);
-        $this->middleware('role:owner', ['only' => ['destroy']]);
+        $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store','destroy']]);
         $this->auth = Utilities::auth();
     }
     /**

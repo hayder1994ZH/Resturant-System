@@ -10,7 +10,7 @@ class ResturantsLanguages extends Model
     protected $guarded =[];
     
     protected $hidden =[
-        'is_deleted', 'created_at', 'updated_at'
+        'is_deleted'
     ];
     
     protected function serializeDate(DateTimeInterface $date)
@@ -19,6 +19,6 @@ class ResturantsLanguages extends Model
     }
     public function lang()
     {
-        return $this->hasMany(Languages::class);
+        return $this->belongsTo(Languages::class, 'lang_id');
     }
 }

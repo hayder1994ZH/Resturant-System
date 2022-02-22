@@ -38,6 +38,10 @@ Route::group(['prefix' => 'v1'], function () {
 
         //ExtraMeals
         Route::apiResource('extra/meal', 'ExtraMealsController');
+        
+        //ResturantsLanguages 
+        Route::apiResource('restaurant/language', 'ResturantsLanguagesController');
+        Route::get('show/restaurant/language/{restaurant_id}', 'ResturantsLanguagesController@getByRestaurantId');
 
         //LangBodys
         Route::apiResource('lang/body', 'LangBodysController');
