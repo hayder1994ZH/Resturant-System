@@ -63,6 +63,19 @@ Route::group(['prefix' => 'v1'], function () {
         //Sliders
         Route::apiResource('slider', 'SlidersController');
 
+        //RestaurantSliders 
+        Route::apiResource('resturantSlider', 'RestaurantSlidersController');
+        Route::post('add/all/restaurant/slider', 'RestaurantSlidersController@addToAllRestaurant');
+        Route::get('all/restaurant/slider/{id}', 'RestaurantSlidersController@getRestaurantBySlidersId');
+
+        //Food Objects
+        Route::apiResource('food/objects', 'FoodObjectsController');
+
+        //FoodObjectRestaurants
+        Route::apiResource('foodObjectsRestaurant', 'FoodObjectRestaurantsController');
+        Route::post('add/all/restaurant/food', 'FoodObjectRestaurantsController@addToAllRestaurant');
+        Route::get('all/restaurant/food/{id}', 'FoodObjectRestaurantsController@getRestaurantByFoodsId');
+
     });
 });
 Route::group(['prefix' => 'web'], function () {

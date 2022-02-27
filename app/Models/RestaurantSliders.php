@@ -17,4 +17,8 @@ class RestaurantSliders extends Model
     {
         return $date->format('Y-m-d h:i:s');
     }
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurants::class, 'restaurant_id');
+    }
 }
