@@ -17,10 +17,7 @@ class Sliders extends Model
     {
         return $date->format('Y-m-d h:i:s');
     }
-    public function meal()
-    {
-        return $this->belongsTo(Meals::class);
-    }
+    
     public function restaurant()
     {
         return $this->belongsTo(Restaurants::class);

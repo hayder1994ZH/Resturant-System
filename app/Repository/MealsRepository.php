@@ -15,14 +15,14 @@ class MealsRepository extends BaseRepository {
                                 ->where('tbable_id', $id)
                                 ->where('tbable_type', 'Meals')
                                 ->with('lang');
-        return $result->orderBy('created_at', 'desc')->get();
+        return $result->orderBy('id', 'desc')->get();
     } 
     //Base repo to get all meal languges
     public function getExtraMeal($id){
         return QueryBuilder::for(ExtraMeals::class)
                                 ->where('is_deleted', 0)
                                 ->where('meal_id', $id)
-                                ->orderBy('created_at', 'desc')->get();
+                                ->orderBy('id', 'desc')->get();
     } 
     
     //Base repo to get all items
@@ -38,7 +38,7 @@ class MealsRepository extends BaseRepository {
         $resultData = $result->where('is_deleted', 0)
                         ->take($take)
                         ->skip($skip)
-                        ->orderBy('created_at', 'desc');
+                        ->orderBy('id', 'desc');
         return [
             'totalCount' => $totalCount,
             'items' => $resultData->get()
@@ -55,13 +55,12 @@ class MealsRepository extends BaseRepository {
                                 ->whereHas('lang', function($q){
                                     $q->where('lang_id', Utilities::getLang());
                                 })
-                                ->with('lang')
                                 ->allowedFilters($filter);
         $totalCount = $result->get()->count();
         $resultData = $result->where('is_deleted', 0)
                         ->take($take)
                         ->skip($skip)
-                        ->orderBy('created_at', 'desc');
+                        ->orderBy('id', 'desc');
         return [
             'totalCount' => $totalCount,
             'items' => $resultData->get()
@@ -77,13 +76,12 @@ class MealsRepository extends BaseRepository {
                                 ->whereHas('lang', function($q){
                                     $q->where('lang_id', Utilities::getLang());
                                 })
-                                ->with('lang')
                                 ->allowedFilters($filter);
         $totalCount = $result->get()->count();
         $resultData = $result->where('is_deleted', 0)
                         ->take($take)
                         ->skip($skip)
-                        ->orderBy('created_at', 'desc');
+                        ->orderBy('id', 'desc');
         return [
             'totalCount' => $totalCount,
             'items' => $resultData->get()

@@ -15,6 +15,15 @@ class Categories extends Model
     protected $hidden =[
         'is_deleted'
     ];
+
+    protected $appends = ['title', 'description'];
+    
+    public function getTitleAttribute(){
+       return Utilities::getTitle('Categories', $this->id);
+    }
+    public function getDescriptionAttribute(){
+        return Utilities::getDescription('Categories', $this->id);
+    }
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d h:i:s');

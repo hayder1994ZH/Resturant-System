@@ -22,7 +22,7 @@ abstract class BaseRepository {
         $resultData = $result->where('is_deleted', 0)
                         ->take($take)
                         ->skip($skip)
-                        ->orderBy('created_at', 'desc');
+                        ->orderBy('id', 'desc');
         return [
             'totalCount' => $totalCount,
             'items' => $resultData->get()

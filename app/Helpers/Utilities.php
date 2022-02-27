@@ -1,14 +1,15 @@
 <?php
 namespace App\Helpers;
 
-use App\Models\BlockVideos;
+use App\Models\Views;
 use App\Models\Channels;
+use App\Models\LangBodys;
 use App\Models\Languages;
+use App\Models\BlockVideos;
 use App\Models\Restaurants;
 use Illuminate\Support\Str;
-use App\Models\Subcategories;
-use App\Models\Views;
 use GuzzleHttp\Psr7\Request;
+use App\Models\Subcategories;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
@@ -40,6 +41,33 @@ class Utilities {
     {
         $lang = Languages::where('name', self::getHeader())->first();
         return ($lang)? $lang->id:null; 
+    }
+    
+    public static function getTitle($table, $id)//get lanuage id
+    {
+        $firstItem =  LangBodys::where('tbable_id', $id)
+                        ->where('tbable_type', $table);
+        $item = ($firstItem->exists())? $firstItem->first()->title:null;
+        if(self::getLang()){
+            $model =  LangBodys::where('tbable_id', $id)
+                            ->where('tbable_type', $table)
+                            ->where('lang_id', self::getLang());
+            return ($model->exists())? $model->first()->title:$item; 
+        }
+        return $item;
+    }
+    public static function getDescription($table, $id)//get lanuage id
+    {
+        $firstItem =  LangBodys::where('tbable_id', $id)
+                        ->where('tbable_type', $table);
+        $item = ($firstItem->exists())? $firstItem->first()->description:null;
+        if(self::getLang()){
+            $model =  LangBodys::where('tbable_id', $id)
+                            ->where('tbable_type', $table)
+                            ->where('lang_id', self::getLang());
+            return ($model->exists())? $model->first()->description:$item; 
+        }
+        return $item;
     }
 
     public static function wrap($data, $code)//get response with status code

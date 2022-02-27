@@ -18,10 +18,20 @@ class Meals extends Model
     {
         return $date->format('Y-m-d h:i:s');
     }
+
+    protected $appends = ['title', 'description'];
+    
+    public function getTitleAttribute(){
+       return Utilities::getTitle('Meals', $this->id);
+    }
+    public function getDescriptionAttribute(){
+        return Utilities::getDescription('Meals', $this->id);
+    }
+    
     //Relationship
     public function category()
     {
-        return $this->belongsTo(Categories::class, 'category_id')->with('langBody');
+        return $this->belongsTo(Categories::class, 'category_id');
     }
     public function restaurant()
     {

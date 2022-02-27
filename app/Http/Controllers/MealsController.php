@@ -34,7 +34,7 @@ class MealsController extends Controller
             'skip' => 'Integer',
             'take' => 'required|Integer'
         ]);
-        $relations = ['restaurant', 'category', 'langBody'];
+        $relations = ['restaurant', 'category'];
         $filter = ['restaurant.name', 'langBody.title'];
         $take = $request->take;
         $skip = $request->skip;
@@ -85,7 +85,7 @@ class MealsController extends Controller
      */
     public function show($id)
     {
-        $relations = ['category', 'langBody'];
+        $relations = ['category'];
         return $this->MealsRepository->getByIdModel($id, $relations);
     }
 
@@ -249,7 +249,7 @@ class MealsController extends Controller
         if(is_null(Utilities::getRestaurant($uuid))){
             return Utilities::wrap(['message' => 'You Don`t have License'], 400);
         }
-        $relations = ['lang', 'extraMeal'];
+        $relations = ['extraMeal'];
         return $this->MealsRepository->getByIdModelWeb($id, $relations, Utilities::getRestaurant($uuid)->id);
     }
 }

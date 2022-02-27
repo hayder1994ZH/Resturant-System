@@ -16,7 +16,7 @@ class CategoriesRepository extends BaseRepository {
                                 if(!empty($relations)){
                                     $result = $result->with($relations);
                                 }
-        return $result->orderBy('created_at', 'desc')->get();
+        return $result->orderBy('id', 'desc')->get();
     } 
     
     //Base repo to get all items
@@ -32,7 +32,7 @@ class CategoriesRepository extends BaseRepository {
         $resultData = $result->where('is_deleted', 0)
                         ->take($take)
                         ->skip($skip)
-                        ->orderBy('created_at', 'desc');
+                        ->orderBy('id', 'desc');
         return [
             'totalCount' => $totalCount,
             'items' => $resultData->get()
@@ -49,13 +49,12 @@ class CategoriesRepository extends BaseRepository {
                                 ->whereHas('lang', function($q){
                                     $q->where('lang_id', Utilities::getLang());
                                 })
-                                ->with('lang')
                                 ->allowedFilters($filter);
         $totalCount = $result->get()->count();
         $resultData = $result->where('is_deleted', 0)
                         ->take($take)
                         ->skip($skip)
-                        ->orderBy('created_at', 'desc');
+                        ->orderBy('id', 'desc');
         return [
             'totalCount' => $totalCount,
             'items' => $resultData->get()
@@ -63,13 +62,12 @@ class CategoriesRepository extends BaseRepository {
     }
 
     //Base repo to get item with models by id
-    public function getByIdModelWeb($id, $relations,$resturantId){
+    public function getByIdModelWeb($id,$resturantId){
         return $this->table->where('is_deleted', 0)
         ->where('restaurant_id', $resturantId)
         ->whereHas('lang', function($q){
             $q->where('lang_id', Utilities::getLang());
         })
-        ->with($relations)
         ->findOrFail($id);
     }
 }

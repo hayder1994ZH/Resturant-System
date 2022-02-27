@@ -4,16 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Sliders;
 use App\Helpers\Utilities;
+use App\Models\Restaurants;
 use Illuminate\Http\Request;
+use App\Models\RestaurantSliders;
 use App\Repository\SlidersRepository;
+use App\Repository\RestaurantSlidersRepository;
 
 class SlidersController extends Controller
 {
     private $SlidersRepository;
-    private $auth;
+    private $RestaurantSlidersRepository;
+    private $auth;//
     public function __construct()
     {
         $this->SlidersRepository = new SlidersRepository(new Sliders());
+        $this->RestaurantSlidersRepository = new RestaurantSlidersRepository(new RestaurantSliders());
         $this->middleware('role:admin,owner', ['only' => ['index', 'update', 'store']]);
         $this->auth = Utilities::auth();
     }
@@ -29,7 +34,7 @@ class SlidersController extends Controller
             'skip' => 'Integer',
             'take' => 'required|Integer'
         ]);
-        $relations = ['meal.langBody','meal.category', 'restaurant'];
+        $relations = ['restaurant'];
         $filter = [];
         $take = $request->take;
         $skip = $request->skip;
@@ -47,11 +52,30 @@ class SlidersController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'meal_id' => 'required|integer|exists:meals,id',
-            'restaurant_id' => 'required|integer|exists:restaurants,id'
+            'file' => 'required|file',
+            'url' => 'required|string',
+            'type' => 'required|string|in:image,video',
         ]);
-
+        $restaurant_ids = $request->validate([
+            'restaurant_ids' => 'required|array'
+        ]); 
+        if ($request->hasfile('file')) { //check file
+            $data['file'] = Utilities::uploadImage($request->file('file'));            
+        }
         $response =  $this->SlidersRepository->create($data);
+        foreach ($restaurant_ids['restaurant_ids'] as $restaurant_id) {
+            $check = Restaurants::where('id', $restaurant_id)->first();
+            if ($check) {
+                $exists = RestaurantSliders::where('restaurant_id', $check->id)
+                                   ->where('slider_id', $response->id)->first();
+                if(!$exists){
+                    $restaurantSliders['restaurant_id'] = $restaurant_id;
+                    $restaurantSliders['slider_id'] = $response->id;
+                    $this->RestaurantSlidersRepository->create($restaurantSliders);
+                }
+
+            }
+        }
         return Utilities::wrap($response, 200);
     }
 
@@ -76,11 +100,33 @@ class SlidersController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'meal_id' => 'required|integer|exists:meals,id',
-            'restaurant_id' => 'required|integer|exists:restaurants,id'
+            'file' => 'file',
+            'url' => 'string',
+            'type' => 'string|in:image,video',
+            'restaurant_id' => 'integer|exists:restaurants,id'
         ]);
-
+        $restaurant_ids = $request->validate([
+            'restaurant_ids' => 'array'
+        ]); 
+        if ($request->hasfile('file')) { //check file
+            $data['file'] = Utilities::uploadImage($request->file('file'));            
+        }
         $response =  $this->SlidersRepository->update($id, $data);
+        if(array_key_exists('restaurant_ids', $request->all())){
+            foreach ($restaurant_ids['restaurant_ids'] as $restaurant_id) {
+                $check = Restaurants::where('id', $restaurant_id)->first();
+                if ($check) {
+                    $exists = RestaurantSliders::where('restaurant_id', $check->id)
+                                       ->where('slider_id', $response->id)->first();
+                    if(!$exists){
+                        $restaurantSliders['restaurant_id'] = $restaurant_id;
+                        $restaurantSliders['slider_id'] = $response->id;
+                        $this->RestaurantSlidersRepository->create($restaurantSliders);
+                    }
+
+                }
+            }
+        }
         return Utilities::wrap($response, 200);
     }
 
@@ -93,7 +139,7 @@ class SlidersController extends Controller
     public function destroy($id)
     {
         $model = Sliders::where('id', $id)->firstOrFail();
-        if($model->restaurant_id != $this->auth->restaurant_id){
+        if($this->auth->rules->name != 'owner'){
             return Utilities::wrap(['message' => 'permission denied'], 401);
         }
         $this->SlidersRepository->delete($model);
@@ -114,12 +160,11 @@ class SlidersController extends Controller
             'skip' => 'Integer',
             'take' => 'required|Integer'
         ]);
-        $filter = ['meal_id'];
         $take = $request->take;
         $skip = $request->skip;
         if(is_null(Utilities::getRestaurant($uuid))){
             return Utilities::wrap(['message' => 'You Don`t have License'], 400);
         }
-        return $this->SlidersRepository->getWeb($skip, $take, $filter,Utilities::getRestaurant($uuid)->id);
+        return $this->SlidersRepository->getWeb($skip, $take, Utilities::getRestaurant($uuid)->id);
     }
 }

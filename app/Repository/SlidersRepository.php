@@ -19,7 +19,7 @@ class SlidersRepository extends BaseRepository {
         $resultData = $result->where('is_deleted', 0)
                         ->take($take)
                         ->skip($skip)
-                        ->orderBy('created_at', 'desc');
+                        ->orderBy('id', 'desc');
         return [
             'totalCount' => $totalCount,
             'items' => $resultData->get()
@@ -29,20 +29,15 @@ class SlidersRepository extends BaseRepository {
     //======= web repo 
     
     //Base repo to get all items
-    public function getWeb($skip, $take, $filter, $id){
+    public function getWeb($skip, $take, $id){
         $result = QueryBuilder::for($this->table)
                                 ->where('is_deleted', 0)
-                                ->where('restaurant_id', $id)
-                                ->whereHas('meal.lang', function($q){
-                                    $q->where('lang_id', Utilities::getLang());
-                                })
-                                ->with('meal.lang')
-                                ->allowedFilters($filter);
+                                ->where('restaurant_id', $id);
         $totalCount = $result->get()->count();
         $resultData = $result->where('is_deleted', 0)
                         ->take($take)
                         ->skip($skip)
-                        ->orderBy('created_at', 'desc');
+                        ->orderBy('id', 'desc');
         return [
             'totalCount' => $totalCount,
             'items' => $resultData->get()

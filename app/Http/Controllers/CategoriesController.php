@@ -34,7 +34,7 @@ class CategoriesController extends Controller
             'skip' => 'Integer',
             'take' => 'required|Integer'
         ]);
-        $relations = ['restaurant', 'langBody'];
+        $relations = ['restaurant'];
         $filter = ['restaurant.name','langBody.title', 'restaurant.uid'];
         $take = $request->take;
         $skip = $request->skip;
@@ -213,7 +213,6 @@ class CategoriesController extends Controller
         if(is_null(Utilities::getRestaurant($uuid))){
             return Utilities::wrap(['message' => 'You Don`t have License'], 400);
         }
-        $relations = ['lang'];
-        return $this->CategoriesRepository->getByIdModelWeb($id, $relations, Utilities::getRestaurant($uuid)->id);
+        return $this->CategoriesRepository->getByIdModelWeb($id, Utilities::getRestaurant($uuid)->id);
     }
 }
