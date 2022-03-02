@@ -90,5 +90,7 @@ Route::group(['prefix' => 'web'], function () {
     Route::get('meal/{id}/{uuid}', 'MealsController@getMeal');
     Route::get('slider/{uuid}', 'SlidersController@getListWeb');
 
+    //restaurant languages
+    Route::get('restaurant/support/language/{uid}', 'ResturantsLanguagesController@getByRestaurantUid');
 
 });

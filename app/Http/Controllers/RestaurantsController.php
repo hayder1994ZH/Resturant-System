@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Utilities;
 use App\Models\Restaurants;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Repository\RestaurantsRepository;
 
@@ -50,7 +51,7 @@ class RestaurantsController extends Controller
             'name' => 'required|string',
             'details' => 'string',
         ]);
-
+        $data['uid'] = Str::random(8) .'-'. rand(1000000,9999999) .'-'. Str::random(8) ;
         if ($request->hasfile('logo')) { //check image
             $data['logo'] = Utilities::uploadImage($request->file('logo'));            
         }

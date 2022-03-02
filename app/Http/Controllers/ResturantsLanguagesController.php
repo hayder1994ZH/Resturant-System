@@ -75,10 +75,22 @@ class ResturantsLanguagesController extends Controller
      * @param  \App\Models\ResturantsLanguages  $id
      * @return \Illuminate\Http\Response
      */
-    public function getByRestaurantId($restaurant_id)
+    public function getByRestaurantId($uid)
     {
         $relations = ['lang'];
-        return $this->ResturantsLanguagesRepository->getByRestaurantId($restaurant_id, $relations);
+        return $this->ResturantsLanguagesRepository->getByRestaurantId($uid, $relations);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\ResturantsLanguages  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getByRestaurantUid($restaurant_id)
+    {
+        $relations = ['lang'];
+        return $this->ResturantsLanguagesRepository->getByRestaurantUid($restaurant_id, $relations);
     }
 
     /**

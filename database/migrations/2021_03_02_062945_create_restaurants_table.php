@@ -16,7 +16,7 @@ class CreateRestaurantsTable extends Migration
     {
         Schema::create('restaurants', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uid')->default(DB::raw('(UUID())'));
+            $table->string('uid')->nullable();
             $table->string('name')->nullable();
             $table->text('details')->nullable();
             $table->string('logo')->nullable();
