@@ -48,7 +48,11 @@ class RestaurantsController extends Controller
     {
         $data = $request->validate([
             'logo' => 'required|image|mimes:jpg,png,jpeg',
-            'name' => 'required|string',
+            'name' => 'required|string|unique:restaurants,name',
+            'address' => 'string',
+            'facebook_url' => 'string',
+            'twitter_url' => 'string',
+            'instagram_url' => 'string',
             'details' => 'string',
         ]);
         $data['uid'] = Str::random(8) .'-'. rand(1000000,9999999) .'-'. Str::random(8) ;
@@ -82,6 +86,18 @@ class RestaurantsController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Restaurants  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getMyRestaurant()
+    {
+        $relations = [];
+        return $this->RestaurantsRepository->getByIdModel($this->auth->restaurant_id, $relations);
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -92,7 +108,11 @@ class RestaurantsController extends Controller
     {
         $data = $request->validate([
             'logo' => 'image|mimes:jpg,png,jpeg',
-            'name' => 'string',
+            'name' => 'string|unique:restaurants,name,'.$id,
+            'address' => 'string',
+            'facebook_url' => 'string',
+            'twitter_url' => 'string',
+            'instagram_url' => 'string',
             'details' => 'string',
         ]);
 

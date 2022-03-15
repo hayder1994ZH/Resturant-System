@@ -10,7 +10,7 @@ class Restaurants extends Model
     protected $guarded =[];
     
     protected $hidden =[
-        'is_deleted'
+        'is_deleted','description'
     ];
     
     protected function serializeDate(DateTimeInterface $date)
@@ -28,5 +28,9 @@ class Restaurants extends Model
     public function meal()
     {
         return $this->hasMany(User::class);
+    }
+    public function phones()
+    {
+        return $this->hasMany(RestaurantPhones::class);
     }
 }

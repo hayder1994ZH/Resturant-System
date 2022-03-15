@@ -52,7 +52,8 @@ class UserRepository extends BaseRepository
             'name' => $user->name,
             'username' => $user->username,
             'uid' => (!is_null($user->restaurant))? $user->restaurant->uid:null ,
-            'restaurant_id' => $user->restaurant_id ,
+            'restaurantName' => (!is_null($user->restaurant))? $user->restaurant->name:null ,
+            'restaurant_id' => $user->restaurant_id,
          ])->fromUser($user);
         return ['token' => $baseToken, 'code' => 200];
     }

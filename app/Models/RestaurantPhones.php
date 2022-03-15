@@ -5,7 +5,7 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
-class FoodObjectRestaurants extends Model
+class RestaurantPhones extends Model
 {
     protected $guarded =[];
     
@@ -16,13 +16,5 @@ class FoodObjectRestaurants extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d h:i:s');
-    }
-    public function restaurant()
-    {
-        return $this->belongsTo(Restaurants::class, 'restaurant_id');
-    }
-    public function food_order()
-    {
-        return $this->belongsTo(FoodObjects::class, 'food_id');
     }
 }

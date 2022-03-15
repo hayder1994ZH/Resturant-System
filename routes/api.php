@@ -39,37 +39,47 @@ Route::group(['prefix' => 'v1'], function () {
         //ExtraMeals
         Route::apiResource('extra/meal', 'ExtraMealsController');
         
-        //ResturantsLanguages 
-        Route::apiResource('restaurant/language', 'ResturantsLanguagesController');
-        Route::get('show/restaurant/language/{restaurant_id}', 'ResturantsLanguagesController@getByRestaurantId');
-
         //LangBodys
         Route::apiResource('lang/body', 'LangBodysController');
 
         //Languages
         Route::apiResource('language', 'LanguagesController');
 
-        //Meals getLangMeal
+        //Meals 
         Route::apiResource('meal', 'MealsController');
         Route::get('meal/lang/{id}', 'MealsController@getLangMeal');
         Route::post('meal/lang', 'MealsController@addNewMealLanguage');
         Route::put('meal/lang/{id}', 'MealsController@updateMealLanguage');
         Route::get('meal/extra/{id}', 'MealsController@getExtraMeals');
-
-        //Restaurants
-        Route::apiResource('restaurant', 'RestaurantsController');
-        Route::get('my/restaurant/{uid}', 'RestaurantsController@getByUid');
+        Route::get('meal/favorite/{id}', 'MealsController@addFavorite');
 
         //Sliders
         Route::apiResource('slider', 'SlidersController');
 
-        //RestaurantSliders 
+        //Food Objects
+        Route::apiResource('food/objects', 'FoodObjectsController');
+
+        //Restaurants
+        Route::apiResource('restaurant', 'RestaurantsController');
+        Route::get('my/restaurant/{uid}', 'RestaurantsController@getByUid');
+        Route::get('my/restaurant', 'RestaurantsController@getMyRestaurant');
+
+        //RestaurantSliders  
         Route::apiResource('resturantSlider', 'RestaurantSlidersController');
         Route::post('add/all/restaurant/slider', 'RestaurantSlidersController@addToAllRestaurant');
         Route::get('all/restaurant/slider/{id}', 'RestaurantSlidersController@getRestaurantBySlidersId');
 
-        //Food Objects
-        Route::apiResource('food/objects', 'FoodObjectsController');
+        //ResturantsLanguages 
+        Route::apiResource('restaurant/language', 'ResturantsLanguagesController');
+        Route::get('show/restaurant/language/{restaurant_id}', 'ResturantsLanguagesController@getByRestaurantId');
+
+        //Restaurant Phones 
+        Route::apiResource('phone/restaurant', 'RestaurantPhonesController');
+        Route::get('show/phone/restaurant/{restaurant_id}', 'RestaurantPhonesController@getByRestaurantId');
+
+        //Restaurant Images 
+        Route::apiResource('image/restaurant', 'RestaurantImagesController');
+        Route::get('show/image/restaurant/{restaurant_id}', 'RestaurantImagesController@getByRestaurantId');
 
         //FoodObjectRestaurants
         Route::apiResource('foodObjectsRestaurant', 'FoodObjectRestaurantsController');
@@ -89,6 +99,9 @@ Route::group(['prefix' => 'web'], function () {
     Route::get('meal/favorite/{uuid}', 'MealsController@getListWebFavorite');
     Route::get('meal/{id}/{uuid}', 'MealsController@getMeal');
     Route::get('slider/{uuid}', 'SlidersController@getListWeb');
+
+    //Food Object
+    Route::get('food/order/restaurant/{uuid}', 'FoodObjectsController@getListWeb');
 
     //restaurant languages
     Route::get('restaurant/support/language/{uid}', 'ResturantsLanguagesController@getByRestaurantUid');

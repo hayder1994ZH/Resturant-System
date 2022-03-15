@@ -1,6 +1,7 @@
 <?php
 namespace App\Repository;
 
+use App\Models\FoodObjectRestaurants;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class FoodObjectsRepository extends BaseRepository {
@@ -10,17 +11,25 @@ class FoodObjectsRepository extends BaseRepository {
     
     //Base repo to get all items
     public function getWeb($skip, $take, $id){
-        $result = QueryBuilder::for($this->table)
-                                ->where('is_deleted', 0)
+        $result = FoodObjectRestaurants::where('is_deleted', 0)
+                                ->with('food_order')
                                 ->where('restaurant_id', $id);
         $totalCount = $result->get()->count();
-        $resultData = $result->where('is_deleted', 0)
-                        ->take($take)
-                        ->skip($skip)
-                        ->orderBy('id', 'desc');
+        $resultData = $result->take($take)
+                                ->skip($skip)
+                                ->orderBy('id', 'desc');
         return [
             'totalCount' => $totalCount,
-            'items' => $resultData->get()
+            'items' => $resultData->get()->map(function ($item) {
+                $data['id'] = $item->food_order->id;
+                $data['name'] = $item->food_order->name;
+                $data['ios_url'] = $item->food_order->ios_url;
+                $data['android_url'] = $item->food_order->android_url;
+                $data['logo'] = $item->food_order->logo;
+                $data['created_at'] = $item->food_order->created_at;
+                $data['updated_at'] = $item->food_order->updated_at;
+                return $data;
+            })
         ];
     }
 }

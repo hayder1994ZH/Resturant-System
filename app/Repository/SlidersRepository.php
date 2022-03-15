@@ -38,9 +38,6 @@ class SlidersRepository extends BaseRepository {
                         ->take($take)
                         ->skip($skip)
                         ->orderBy('id', 'desc');
-        return [
-            'totalCount' => $totalCount,
-            'items' => $resultData->get()
-        ];
+        return  $resultData->get();
     }
 }

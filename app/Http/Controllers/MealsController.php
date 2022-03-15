@@ -109,8 +109,24 @@ class MealsController extends Controller
      */
     public function getExtraMeals($id)
     {
-        $relations = [];
         return $this->MealsRepository->getExtraMeal($id);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Categories  $id
+     * @return \Illuminate\Http\Response getExtraMeal
+     */
+    public function addFavorite($id)
+    {
+        $meal = $this->MealsRepository->getById($id);
+        if($meal->type == 1){
+            $this->MealsRepository->update($id, ['type' => 0]);
+            return Utilities::wrap(['message' => 'remove from favorite'], 200);
+        }
+        $this->MealsRepository->update($id, ['type' => 1]);
+        return Utilities::wrap(['message' => 'add to favorite'], 200);
     }
 
     /**
